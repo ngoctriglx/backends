@@ -35,7 +35,7 @@
     {{-- show comment --}}
     @foreach($cmt as $key => $val)
       @foreach($user as $val2)
-          @if($val->user_id === $val2->id)
+          @if($val->user_id === $val2->user_id)
             <!-- Single Comment -->
               <div>
                 <img 
@@ -47,7 +47,7 @@
                   @endif
                   alt="" width="50px" height="50px">
                   <div>
-                  <h5>{{$val2->username}}</h5>
+                  <h5>{{$val2->fullname}}</h5>
                     {{$val->content}}<br>
                   <small><i>{{$val->updated_at}}</i></small>
               </div>

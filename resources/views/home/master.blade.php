@@ -1,12 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
     <?php 
-      use App\cate;
+      use App\cate,App\info;
       use Illuminate\Support\Facades\Auth;
       use Illuminate\Support\Facades\DB;
       $cate = cate::all();
       $new = DB::table('news')->orderBy('view', 'desc')->get();
-      $user = Auth::user();
+      if(Auth::check())
+      $info = info::where('user_id',Auth::user()->id)->get();
+      
     ?>
 <head>
     <meta charset="UTF-8">
@@ -31,17 +33,10 @@
           @if(Auth::check())
             <li>
               <div>
-                <a data-toggle="dropdown" href="#">
-                  @if (!empty($user['username']))
-                    {{$user['username']}}
-                  @else
-                    {{$user['email']}}
-                  @endif
-                </a>
+                <label for="">{{$info[0]['fullname']}}</label>
                 <ul style="min-width:auto;">
-                    <li><a href="">Edit info</a></li>
-                    {{--  {{route('home.get.edit')}}  --}}
-                    <li><a href="#" data-toggle="modal" data-target="#myModal">Change pass</a></li>
+                    <li><a href="{{route('home.get.edit')}}">Edit info</a></li>
+                    <li><a href="{{route('home.get.changepass')}}">Change pass</a></li>
                   </ul>
               </div>
             </li>

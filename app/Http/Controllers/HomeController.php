@@ -31,7 +31,7 @@ class HomeController extends Controller
             $n->save();
         }
         $cmt = DB::table('comment')->where('new_id','=',$id)->orderBy('id','desc')->get();
-        $user = DB::table('users')->get();
+        $user = DB::table('info')->get();
         //return redirect()->route('home.get.content',['new' => $new , 'cmt' => $cmt , 'user' => $user]);
         return view('home.content',['new' => $new , 'cmt' => $cmt , 'user' => $user]);
     }
@@ -58,7 +58,7 @@ class HomeController extends Controller
     public function postReportComment($id){
         if(Auth::check()){
         $cmt = comment::find($id);
-        $cmt['report'] +=1;
+        $cmt['report'] += 1;
         $cmt->save();
         return back();
         }
@@ -105,8 +105,8 @@ class HomeController extends Controller
         }
         $validator = Validator::make($request->all() , [
             'fullname' => 'required|max:50',
-            'username' => 'required|min:5|max:30|unique:users,username',
-            'password' => 'required|min:8|max:30',
+            'username' => 'required|min:6|max:30|unique:users,username',
+            'password' => 'required|min:6|max:30',
             'repassword' => 'required|same:password'
         ] , [
             'fullname.required' => 'Vui lòng nhập tên của bạn !',
@@ -136,7 +136,7 @@ class HomeController extends Controller
             $user->save();
             $userid = $user->id;
             $info = new info;
-            $info['userid'] = $userid;
+            $info['user_id'] = $userid;
             $info['fullname'] = $request['fullname'];
             $info->save();
             //Auth::attempt(['username' => $request['username'] , 'password' => $request['password']]);
@@ -154,5 +154,37 @@ class HomeController extends Controller
         }
         Auth::logout();
         return redirect()->route('home.get.index');
+    }
+
+    public function getEdit(){
+        $id = Auth::user()->id;
+        $user = DB::table('users')
+        ->join('info', 'info.user_id', 'users.id')
+        ->where('users.id',$id)->get();
+        $a = $user[0];
+        return view('home.editinfo',['val' => $a]);
+    }
+
+    public function postEdit(Request $request){
+
+        $ad = Auth::user();
+        $id = $ad['id'];
+        $info = info::where('user_id',$id)->first();
+
+        $fullname = $request['fullname'];
+        $age = $request['age'];
+        $facebook = $request['facebook'];
+
+        $info['fullname'] = $fullname;
+        $info['birth'] = $age;
+        $info['facebook'] = $facebook;
+    
+        $info->save();
+
+        //return redirect()->route('home.get.index')->with('phanquyen' ,'Cập nhật thông tin thành công !');
+        return back()->with('phanquyen' ,'Cập nhật thông tin thành công !');
+    }
+    public function getChangePass(){
+        return view('home.changepass');
     }
 }

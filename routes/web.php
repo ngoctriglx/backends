@@ -35,11 +35,17 @@ Route::group(['prefix' => 'home'], function () {
 
         Route::get('/logout','HomeController@getLogout')->name('home.get.logout');
 
+        Route::get('/edit','HomeController@getEdit')->name('home.get.edit');
+        Route::post('/edit','HomeController@postEdit')->name('home.post.edit');
+
         Route::post('/comment/{new_id}','HomeController@postComment')->name('home.post.comment');
 
         Route::get('/{id}','HomeController@postDeleteComment')-> name('home.post.deletecomment');
         
         Route::get('/{id}','HomeController@postReportComment')-> name('home.post.reportcomment');
+
+        Route::get('/changepass','HomeController@getChangePass')->name('home.get.changepass');
+        Route::post('/changepass','HomeController@postChangePass')->name('home.post.changepass');
     });
 });
 
