@@ -18,7 +18,7 @@ use Illuminate\Support\Facades\Route;
 // });
 
 Route::get('check', 'checkonline@userOnlineStatus');
-
+Route::get('/send','HomeController@getSendEmail');
 
 Route::group(['prefix' => 'home'], function () {
 
@@ -46,6 +46,18 @@ Route::group(['prefix' => 'home'], function () {
 
         Route::get('/changepass','HomeController@getChangePass')->name('home.get.changepass');
         Route::post('/changepass','HomeController@postChangePass')->name('home.post.changepass');
+
+        Route::get('/logingoogle/{provider}','HomeController@getGoogleRedirect')->name('home.get.googleredirect');
+        Route::get('/logingoogle/{provider}/callback','HomeController@getGoogleCallback')->name('home.get.googlecallback');
+
+        Route::get('/loginfacebook/{provider}','HomeController@getFacebookRedirect')->name('home.get.facebookredirect');
+        Route::get('/loginfacebook/{provider}/callback','HomeController@getFacebookCallback')->name('home.get.facebookcallback');
+
+        //Route::get('/cookie/set','Cookie@setCookieAccurary')->name('home.set.CookieAccurary');
+        //Route::get('/cookie/get','Cookie@getCookieAccurary')->name('home.get.CookieAccurary');
+        Route::get('/','Cookie@setCookieAccurary');
+        Route::get('/','Cookie@getetCookieAccurary');
+        //Route::resource('cookie', 'Cookier')->name('cookie');
     });
 });
 

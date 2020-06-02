@@ -9,6 +9,18 @@ use App\news;
 use App\info;
 use App\comment;
 use Validator;
+use Socialite;
+use Exception;
+
+use Illuminate\Support\Facades\Mail;
+use App\Mail\MailNotify;
+
+use Illuminate\Support\Facades\Cookie;
+use Illuminate\Http\Response;
+
+
+
+
 use Illuminate\Support\Facades\DB;
 use Illuminate\Routing\Redirector;
 
@@ -139,6 +151,11 @@ class HomeController extends Controller
             $info['user_id'] = $userid;
             $info['fullname'] = $request['fullname'];
             $info->save();
+            //mail xac minh
+            $string = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            $random = substr(str_shuffle($string), 0, 6);
+            
+            //end mail
             //Auth::attempt(['username' => $request['username'] , 'password' => $request['password']]);
             //return redirect()->route('home.get.index');
             Auth::attempt(['username' => $request['username'] , 'password' => $request['password']]);
@@ -186,5 +203,99 @@ class HomeController extends Controller
     }
     public function getChangePass(){
         return view('home.changepass');
+    }
+    
+    public function getGoogleRedirect($provider){
+        
+        return Socialite::driver($provider)->redirect();
+    }
+   
+    public function getGoogleCallback($provider){
+        try {
+            $google = Socialite::driver($provider)->user();
+            $finduser = User::where('email', $google->email)->first();
+            if($finduser){
+                Auth::login($finduser);
+                return redirect()->route('home.get.index');
+           }else{
+                // $newUser = User::create([
+                //     'name' => $user->name,
+                //     'email' => $user->email,
+                //     'google_id'=> $user->id,
+                //     'password' => encrypt('123456dummy')
+                // ]);
+                // Auth::login($newUser);
+                // return redirect('/home');
+                $user = new User();
+                $user['email'] = $google->email;
+                //$user['remember_token'] = $provider;
+                $user->save();
+                $user_id = $user->id;
+                $info = new info();
+                $info['user_id'] = $user_id;
+                $info['fullname'] = $google->name;
+                $info['avatar'] = $google->avatar;
+                $info->save();
+                Auth::login($user);
+                return redirect()->route('home.get.index');
+            }
+        } catch (Exception $e) {
+            dd($e->getMessage());
+        }
+    }
+    public function getFacebookRedirect($provider){
+        return Socialite::driver($provider)->redirect();
+    }
+    public function getFacebookCallback($provider){
+        $facebook = Socialite::driver($provider)->user();
+        // echo $facebook->id.'<br>';
+        // echo $facebook->email.'<br>';
+        // echo $facebook->name.'<br>';
+        // echo $facebook->avatar.'<br>';
+        // echo $provider.'<br>';
+        if(!$facebook->email){
+            echo "Tài khoản chưa liên kết gmail";
+        }
+        else{
+            $count = User::where('email',$facebook->email)->count();
+            $finduser = User::where('email',$facebook->email)->first();
+            if($count > 0){
+                Auth::login($finduser);
+                return redirect()->route('home.get.index');
+            }
+            else{
+                $user = new User;
+                $user['email'] =  $facebook->email;
+                $user->save();
+                $user_id = $user->id;
+                $info = new info;
+                $info['user_id'] = $user_id;
+                $info['fullname'] = $facebook->name;
+                $info['avatar'] = $facebook->avatar;
+                $info->save();
+                Auth::login($user);
+                return redirect()->route('home.get.index');
+            }
+        }
+    }
+    public function getSendEmail(Request $request) {
+
+        $string = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        $random = substr(str_shuffle($string), 0, 6);
+        echo $random.'<br>**************';
+        //Cookie::queue('xacminh', $random, 0.1);
+        
+        //return request()->cookie('xacminh');
+        //echo $code;
+        // Mail::to('ngoctriqntest@gmail.com')->send(new MailNotify($code));
+
+        // $data = array('name'=>"Blog du lịch");
+        // $callback = function($message) {
+        //     $message->to('ngoctriqntest@gmail.com')->subject('Xác thực tài khoản');
+        //     //$message->from('xyz@gmail.com','Virat Gandhi');
+        //  };
+        // Mail::send(['html'=>'home.accuracy'], $data, $callback);
+        // echo "gui xong";
+        // return redirect()->route('home.get.index');
     }
 }

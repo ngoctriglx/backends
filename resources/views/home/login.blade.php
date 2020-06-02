@@ -23,11 +23,10 @@
         @if(session('error'))
         <strong>Danger!</strong> {{session('error')}}
         @endif
-        
-        <a href="sigin" class="btn-face m-b-20">
-            <i class="fa fa-facebook-official"></i>
-            Sigin
-        </a>
+        {{-- <a href="{{route('home.get.googleredirect')}}">LoginGmail</a> --}}
+        <a href="{{url('/home/user/logingoogle/google')}}">LoginGmail</a>
+        <br>
+        <a href="{{url('/home/user/loginfacebook/facebook')}}">LoginFacebook</a>
     </form>
 </body>
 </html>
