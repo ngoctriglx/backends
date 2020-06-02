@@ -11,15 +11,15 @@ class MailNotify extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public $code;
+    public $link;
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct()
+    public function __construct($link)
     {
-        this->code = $code;
+        $this->link = $link;
     }
 
     /**
@@ -29,7 +29,6 @@ class MailNotify extends Mailable
      */
     public function build()
     {
-        return $this
-            ->html('home.accuracy');
+        return $this->test('home.accuracy');
     }
 }

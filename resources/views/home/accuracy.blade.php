@@ -7,7 +7,6 @@
     <title>Xác minh tài khoản</title>
 </head>
 <body>
-    <p><h4>Mã xác nhận tài khoản của bạn là :</h4><h2>{{$code}}</h2></p>
-    <p><h4>Mã sẽ hết hiệu lực sau 60 giây</h4></p>
+    <p><h4>Click vào đường dẫn để thay đổi mật khẩu :</h4><h2>{{$link}}</h2></p>
 </body>
 </html>

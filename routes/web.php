@@ -19,6 +19,13 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('check', 'checkonline@userOnlineStatus');
 Route::get('/send','HomeController@getSendEmail');
+Route::get('/test','test@test');
+
+Route::get('/pass', function() {
+    return view('home.forgotpassword');
+});
+
+Route::post('/forgotpassword','ForgotPassword@postForgotPassword')->name('home.forgotpassword');
 
 Route::group(['prefix' => 'home'], function () {
 
